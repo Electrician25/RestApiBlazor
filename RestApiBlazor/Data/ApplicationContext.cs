@@ -16,13 +16,13 @@ namespace RESTapi.Data
             {
                 new User()
                 {
-                    Name = "Vanya",
-                    Email = "vanya2649@mail.ru"
+                    Email = "vanya2649@mail.ru",
+                    Password = "34gve54rhg4"
                 },
                 new User()
                 {
-                    Name = "Kirill",
-                    Email = "KIRilL4a9@mail.ru"
+                    Email = "KIRilL4a9@mail.ru",
+                    Password = "i94bju40b"
                 }
             });
         }
