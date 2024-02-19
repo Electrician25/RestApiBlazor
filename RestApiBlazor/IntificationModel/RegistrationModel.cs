@@ -6,7 +6,7 @@ namespace RestApiBlazor.IntificationModel
     {
         [Required(ErrorMessage = "Confirm your password")]
         [DataType(DataType.Password)]
-        [Compare("Password",ErrorMessage ="Password and confirm password is not correct")]
-        public string Confirm { get; set; }
+        [Compare("Password", ErrorMessage = "Password and confirm password is not correct")]
+        public string? Confirm { get; set; }
     }
 }

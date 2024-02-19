@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace RestApiBlazor.IntificationModel
 {
@@ -7,10 +6,10 @@ namespace RestApiBlazor.IntificationModel
     {
         [Required(ErrorMessage = "Email is requared!")]
         [EmailAddress(ErrorMessage = "This email is valid!")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required(ErrorMessage = "Password is requared!")]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
     }
 }
