@@ -1,30 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
+using MongoDB.EntityFrameworkCore.Extensions;
 using RESTapi.Users;
 
 namespace RESTapi.Data
 {
     public class ApplicationContext : DbContext
     {
-        public virtual DbSet<User> Users => Set<User>();
-
-        public ApplicationContext(DbContextOptions<ApplicationContext> options)
-            : base(options) { Database.EnsureCreated(); }
-
+        public DbSet<User> Users { get; init; }
+        public static ApplicationContext Create(IMongoDatabase database) =>
+            new(new DbContextOptionsBuilder<ApplicationContext>()
+                .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
+                .Options);
+        public ApplicationContext(DbContextOptions options)
+            : base(options)
+        {
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasData(new User[]
-            {
-                new User()
-                {
-                    Email = "vanya2649@mail.ru",
-                    Password = "34gve54rhg4"
-                },
-                new User()
-                {
-                    Email = "KIRilL4a9@mail.ru",
-                    Password = "i94bju40b"
-                }
-            });
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>().ToCollection("users");
         }
     }
 }
