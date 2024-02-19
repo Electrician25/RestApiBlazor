@@ -44,7 +44,6 @@ namespace RESTapi.Crud
                 .FirstOrDefaultAsync(userId => userId.Id == currectUser.Id)
                 ?? throw new Exception($"User: {currectUser} is not found!");
 
-            newUser.Name = currectUser.Name;
             newUser.Email = currectUser.Email;
 
             return newUser;
