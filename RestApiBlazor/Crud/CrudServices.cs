@@ -1,64 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RESTapi.Data;
+using MongoDB.Driver;
 using RESTapi.Users;
 
 namespace RESTapi.Crud
 {
     public class CrudServices : ControllerBase
     {
-        private readonly ApplicationContext _applicationContext;
+        private readonly IMongoCollection<User> _booksCollection;
 
-        public CrudServices(ApplicationContext applicationContext)
+        public CrudServices(IMongoCollection<User> booksCollection)
         {
-            _applicationContext = applicationContext;
+            _booksCollection = booksCollection;
         }
 
-        async public Task<User> CreateNewUserAsync(User user)
-        {
-            await _applicationContext.AddAsync(user);
-            _applicationContext.SaveChanges();
+        public async Task CreateNewUserAsync(User user)
+            => await _booksCollection.InsertOneAsync(user);
 
-            return user;
-        }
-
-        async public Task<User[]> GetAllUsersAsync()
-        {
-            var users = await _applicationContext.Users.ToArrayAsync();
-
-            return users;
-        }
+        public async Task<List<User>> GetAllUsersAsync()
+            => await _booksCollection.Find(_ => true).ToListAsync();
 
         public async Task<User> GetUserByIdAsync(int id)
-        {
-            var user = await _applicationContext.Users
-                .FirstOrDefaultAsync(userId => userId.Id == id)
-                ?? throw new Exception($"User id: {id} not found!");
+            => await _booksCollection.Find(user => user.Id == id).FirstOrDefaultAsync();
 
-            return user;
-        }
+        public async Task UpdateUserAsync(int id, User updatedUser)
+            => await _booksCollection.ReplaceOneAsync(userId => userId.Id == id, updatedUser);
 
-        async public Task<User> UpdateUserAsync(User currectUser)
-        {
-            var newUser = await _applicationContext.Users
-                .FirstOrDefaultAsync(userId => userId.Id == currectUser.Id)
-                ?? throw new Exception($"User: {currectUser} is not found!");
-
-            newUser.Email = currectUser.Email;
-
-            return newUser;
-        }
-
-        async public Task<User> DeleteUserAsync(User user)
-        {
-            var userId = await _applicationContext.Users
-                .FirstOrDefaultAsync(userId => userId.Id == user.Id)
-                ?? throw new Exception($"User: {user} is not found");
-
-            _applicationContext.Remove(userId);
-            _applicationContext.SaveChanges();
-
-            return userId;
-        }
+        public async Task DeleteUserAsync(int id)
+            => await _booksCollection.DeleteOneAsync(userId => userId.Id == id);
     }
 }
