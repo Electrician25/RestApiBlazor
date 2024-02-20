@@ -1,3 +1,4 @@
+using RESTapi.Data;
 using RestApiBlazor.JwtTokenServices;
 using RestApiBlazor.Services;
 
@@ -8,6 +9,7 @@ builder.Services.AddMvc();
 builder.Services.AddJwtToken();
 builder.AddApplicationContext();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddSingleton<ApplicationContext>();
 
 var app = builder.Build();
 

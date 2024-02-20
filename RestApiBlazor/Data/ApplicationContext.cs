@@ -1,25 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using MongoDB.EntityFrameworkCore.Extensions;
 using RESTapi.Users;
+using RestApiBlazor.Entities;
 
 namespace RESTapi.Data
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext
     {
-        public DbSet<User> Users { get; init; }
-        public static ApplicationContext Create(IMongoDatabase database) =>
-            new(new DbContextOptionsBuilder<ApplicationContext>()
-                .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
-                .Options);
-        public ApplicationContext(DbContextOptions options)
-            : base(options)
-        { }
+        private readonly IMongoCollection<User> _booksCollection;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public ApplicationContext(
+            IOptions<UsersDatabaseSettings> bookStoreDatabaseSettings)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<User>().ToCollection("users");
+            var mongoClient = new MongoClient(
+                bookStoreDatabaseSettings.Value.ConnectionString);
+
+            var mongoDatabase = mongoClient.GetDatabase(
+                bookStoreDatabaseSettings.Value.DatabaseName);
+
+            _booksCollection = mongoDatabase.GetCollection<User>(
+                bookStoreDatabaseSettings.Value.UsersCollectionName);
         }
     }
 }
